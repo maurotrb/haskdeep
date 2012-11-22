@@ -1,7 +1,7 @@
 -- |
--- Module      :  Main
+-- Module      :  HaskDeep.Command.Main
 -- Copyright   :  Mauro Taraborelli 2012
--- License     :  MIT
+-- License     :  BSD3
 --
 -- Maintainer  :  maurotaraborelli@gmail.com
 -- Stability   :  experimental

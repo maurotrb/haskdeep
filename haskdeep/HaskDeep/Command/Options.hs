@@ -1,7 +1,7 @@
 -- |
--- Module      :  Main
+-- Module      :  HaskDeep.Command.Options
 -- Copyright   :  Mauro Taraborelli 2012
--- License     :  MIT
+-- License     :  BSD3
 --
 -- Maintainer  :  maurotaraborelli@gmail.com
 -- Stability   :  experimental
@@ -24,7 +24,6 @@ import           Prelude hiding (FilePath)
 import           Filesystem.Path.CurrentOS (FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
 import           Options.Applicative
-import           Options.Applicative.Utils
 
 data Options = Options
     { exectype :: ExecutionTypeOpt

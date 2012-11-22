@@ -2,7 +2,7 @@
 -- |
 -- Module      :  HaskDeep.HashSet
 -- Copyright   :  Mauro Taraborelli 2012
--- License     :  MIT
+-- License     :  BSD3
 --
 -- Maintainer  :  maurotaraborelli@gmail.com
 -- Stability   :  experimental
@@ -26,18 +26,13 @@ module HaskDeep.HashSet
     )
 where
 
-import           Data.Either (either)
 import           Prelude hiding (FilePath)
 
-import           Crypto.Classes (Hash)
-import           Data.ByteString (ByteString)
+import           Crypto.Classes ()
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as B8
 import           Data.Set (Set)
 import qualified Data.Set as Set
-import           Data.Text (Text)
-import qualified Data.Text as T
-import qualified Data.Text.Encoding as TE
 import           Filesystem.Path.CurrentOS (FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
 
@@ -45,7 +40,7 @@ import qualified Filesystem.Path.CurrentOS as FSC
 data HashInfo = HashInfo
     { file :: FilePath      -- ^ File path, relative
     , size :: Integer       -- ^ File size in byte
-    , hash :: ByteString -- ^ File hash
+    , hash :: BS.ByteString -- ^ File hash
     } deriving (Eq, Ord)
 
 instance Show HashInfo where
