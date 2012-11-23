@@ -11,6 +11,7 @@ files or a copy of them.
 Quick start
 -----------
 Excute haskdeep without arguments and it will show you the help text:
+
     user@host:~$ haskdeep
     haskdeep - file hashing and audit
 
