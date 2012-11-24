@@ -39,6 +39,8 @@ import qualified Data.Conduit as C
 import qualified Data.Conduit.Attoparsec as CA
 import qualified Data.Conduit.Filesystem as CF
 import qualified Data.Conduit.List as CL
+import           Data.Text ()
+import qualified Data.Text.Encoding as TE
 import           Filesystem.Path(FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
 
@@ -69,7 +71,7 @@ fileinfo :: Parser HashInfo
 fileinfo = do sizep  <- A.takeTill isComma   <* skipComma
               hashp  <- A.takeTill isComma   <* skipComma
               filep  <- A.takeTill isNewline <* skipNewline
-              let filep'      = FSC.decode filep
+              let filep'      = FSC.fromText $ TE.decodeUtf8 filep
                   (sizep', _) = fromJust $ B8.readInteger sizep
               return $ HashInfo filep' sizep' hashp
 
@@ -96,5 +98,5 @@ write known cmdesc hashset = C.runResourceT $ CL.sourceList bs_known $$ CF.sinkF
       known_header1 = "%%%% HASHDEEP-1.0\n" :: ByteString
       known_header2 = "%%%% size," `BS.append` B8.pack cmdesc `BS.append` ",file\n" :: ByteString
       newline = "\n" :: ByteString
-      bs_hash_set = map (flip BS.append newline . B8.pack . show) $ HS.toAscList hashset
+      bs_hash_set = map (flip BS.append newline . HS.toByteString) $ HS.toAscList hashset
       bs_known    = [known_header1, known_header2] ++ bs_hash_set
