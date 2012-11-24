@@ -42,7 +42,6 @@ import qualified Data.Conduit.List as CL
 import           Data.Text ()
 import qualified Data.Text.Encoding as TE
 import           Filesystem.Path(FilePath)
-import qualified Filesystem.Path.CurrentOS as FSC
 
 import           HaskDeep.HashSet (HashSet, HashInfo(..))
 import qualified HaskDeep.HashSet as HS
@@ -71,7 +70,7 @@ fileinfo :: Parser HashInfo
 fileinfo = do sizep  <- A.takeTill isComma   <* skipComma
               hashp  <- A.takeTill isComma   <* skipComma
               filep  <- A.takeTill isNewline <* skipNewline
-              let filep'      = FSC.fromText $ TE.decodeUtf8 filep
+              let filep'      = TE.decodeUtf8 filep
                   (sizep', _) = fromJust $ B8.readInteger sizep
               return $ HashInfo filep' sizep' hashp
 

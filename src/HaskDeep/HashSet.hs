@@ -35,15 +35,13 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as B8
 import           Data.Set (Set)
 import qualified Data.Set as Set
-import           Data.Text ()
+import           Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
-import           Filesystem.Path.CurrentOS (FilePath)
-import qualified Filesystem.Path.CurrentOS as FSC
 
 -- | Information about the hashed file
 data HashInfo = HashInfo
-    { file :: FilePath   -- ^ File path, relative
+    { file :: Text       -- ^ Relative file path
     , size :: Integer    -- ^ File size in byte
     , hash :: ByteString -- ^ File hash
     } deriving (Eq, Ord)
@@ -53,14 +51,14 @@ instance Show HashInfo where
                             ++ ","
                             ++ B8.unpack h
                             ++ ","
-                            ++ (T.unpack $ either id id $ FSC.toText f)
+                            ++ T.unpack f
 
 toByteString :: HashInfo -> ByteString
 toByteString (HashInfo f s h) = (B8.pack $ show s)
                                 `BS.append` commaBS
                                 `BS.append` h
                                 `BS.append` commaBS
-                                `BS.append` (TE.encodeUtf8 $ either id id $ FSC.toText f)
+                                `BS.append` TE.encodeUtf8 f
 
 commaBS :: ByteString
 commaBS = B8.singleton ','

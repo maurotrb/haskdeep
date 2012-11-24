@@ -75,7 +75,7 @@ compute root cm = CF.traverse False root $$ CL.foldM insert_hash HS.empty
       insert_hash hs fp = do
         s     <- FS.getSize fp
         h     <- liftM cm $ C.runResourceT $ CF.sourceFile fp $$ CC.sinkHash
-        let p = fromJust $ FSC.stripPrefix root fp
+        let p = either id id $ FSC.toText $ fromJust $ FSC.stripPrefix root fp
         return $ HS.insert (HashInfo p s h) hs
 
 -- Only with ByteString 0.10
