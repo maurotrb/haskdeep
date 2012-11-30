@@ -98,9 +98,9 @@ write kfp hs cmts = C.runResourceT $ CL.sourceList bs_known $$ CF.sinkFile kfp
                       `BS.append` newline
       known_header2 = "%%%% size,"
                       `BS.append` TE.encodeUtf8 (HS.compSymbol hs)
-                      `BS.append` ",file"
+                      `BS.append` ",filename"
                       `BS.append` newline
-      bs_comments   = map (flip BS.append newline . BS.append "# " . TE.encodeUtf8) cmts
-                      ++ ["#" `BS.append` newline]
+      bs_comments   = map (flip BS.append newline . BS.append "## " . TE.encodeUtf8) cmts
+                      ++ ["## " `BS.append` newline]
       bs_hash_set   = map (flip BS.append newline . HS.toByteString) $ HS.toAscList hs
       bs_known      = [known_header1, known_header2] ++ bs_comments ++ bs_hash_set
