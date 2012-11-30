@@ -14,10 +14,10 @@
 module HaskDeep.KnownHash
     (
      -- * Read the known hashes file
-     read
+     read   -- FilePath -> IO HashSet
 
      -- * Write the known hashes file
-    ,write
+    ,write  -- HashSet
     )
 where
 
@@ -39,7 +39,7 @@ import qualified Data.Conduit as C
 import qualified Data.Conduit.Attoparsec as CA
 import qualified Data.Conduit.Filesystem as CF
 import qualified Data.Conduit.List as CL
-import           Data.Text ()
+import           Data.Text (Text)
 import qualified Data.Text.Encoding as TE
 import           Filesystem.Path(FilePath)
 
@@ -86,16 +86,21 @@ isNewline w = w == 10
 skipNewline :: Parser ()
 skipNewline = A.skip isNewline
 
-
 -- | Write an HashSet into a known hashes file
 write :: FilePath -- ^ Path of the known hashes file
-      -> String   -- ^ Computation method description
       -> HashSet  -- ^ HashSet to write to the file
+      -> [Text]   -- ^ Comments
       -> IO ()
-write known cmdesc hashset = C.runResourceT $ CL.sourceList bs_known $$ CF.sinkFile known
+write kfp hs cmts = C.runResourceT $ CL.sourceList bs_known $$ CF.sinkFile kfp
     where
-      known_header1 = "%%%% HASHDEEP-1.0\n" :: ByteString
-      known_header2 = "%%%% size," `BS.append` B8.pack cmdesc `BS.append` ",file\n" :: ByteString
-      newline = "\n" :: ByteString
-      bs_hash_set = map (flip BS.append newline . HS.toByteString) $ HS.toAscList hashset
-      bs_known    = [known_header1, known_header2] ++ bs_hash_set
+      newline       = "\n" :: ByteString
+      known_header1 = "%%%% HASHDEEP-1.0"
+                      `BS.append` newline
+      known_header2 = "%%%% size,"
+                      `BS.append` TE.encodeUtf8 (HS.compSymbol hs)
+                      `BS.append` ",file"
+                      `BS.append` newline
+      bs_comments   = map (flip BS.append newline . BS.append "# " . TE.encodeUtf8) cmts
+                      ++ ["#" `BS.append` newline]
+      bs_hash_set   = map (flip BS.append newline . HS.toByteString) $ HS.toAscList hs
+      bs_known      = [known_header1, known_header2] ++ bs_comments ++ bs_hash_set

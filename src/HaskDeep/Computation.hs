@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 -- |
 -- Module      :  HaskDeep.Computation
 -- Copyright   :  Mauro Taraborelli 2012
@@ -16,7 +17,7 @@ module HaskDeep.Computation
      compute  -- Hash ctx a => FilePath -> ComputationMode a -> IO HashSet
 
     -- * Computation modes: MD5, SHA1 ...
-    ,ComputationMode  -- a -> Bytestring
+    ,ComputationMode (..)
     ,md5hash
     ,sha1hash
     ,sha256hash
@@ -43,6 +44,8 @@ import qualified Data.Conduit as C
 import qualified Data.Conduit.Filesystem as CF
 import qualified Data.Conduit.List as CL
 import qualified Data.Serialize as S
+import           Data.Text ()
+import qualified Data.Text as T
 import qualified Filesystem as FS
 import           Filesystem.Path.CurrentOS (FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
@@ -51,30 +54,34 @@ import           HaskDeep.HashSet (HashInfo(..), HashSet)
 import qualified HaskDeep.HashSet as HS
 
 -- | Algorithm to compute hash
-type ComputationMode a = a -> ByteString
+data ComputationMode a = ComputationMode
+                         { compSymbol     :: T.Text
+                         , runComputation :: a -> ByteString
+                         }
 
 md5hash  :: ComputationMode MD5
-md5hash  = toHex . S.encode
+md5hash  = ComputationMode "md5" (toHex . S.encode)
 
 sha1hash :: ComputationMode SHA1
-sha1hash = toHex . S.encode
+sha1hash = ComputationMode "sha1" (toHex . S.encode)
 
 sha256hash :: ComputationMode SHA256
-sha256hash = toHex . S.encode
+sha256hash = ComputationMode "sha256" (toHex . S.encode)
 
 skein512hash :: ComputationMode Skein512
-skein512hash = toHex . S.encode
+skein512hash = ComputationMode "skein512" (toHex . S.encode)
 
 -- | Compute @HashSet@ traversing recursively through the directory structure.
 compute :: Hash ctx a => FilePath -- ^ Root path
         -> ComputationMode a      -- ^ Algorithm to compute hash
         -> IO HashSet             -- ^ Computed HashSet
-compute root cm = CF.traverse False root $$ CL.foldM insert_hash HS.empty
+compute root cm = CF.traverse False root $$ CL.foldM insert_hash emptyWithSymbol
     where
+      emptyWithSymbol = HS.setSymbol (compSymbol cm) HS.empty
       insert_hash :: HashSet -> FilePath -> IO HashSet
       insert_hash hs fp = do
         s     <- FS.getSize fp
-        h     <- liftM cm $ C.runResourceT $ CF.sourceFile fp $$ CC.sinkHash
+        h     <- liftM (runComputation cm) $ C.runResourceT $ CF.sourceFile fp $$ CC.sinkHash
         let p = either id id $ FSC.toText $ fromJust $ FSC.stripPrefix root fp
         return $ HS.insert (HashInfo p s h) hs
 

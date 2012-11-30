@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 -- |
 -- Module      :  HaskDeep.Command.Main
 -- Copyright   :  Mauro Taraborelli 2012
@@ -16,10 +17,16 @@ module HaskDeep.Command.Main
     )
 where
 
+import           Control.Monad (liftM)
 import           Prelude hiding (FilePath)
 
 import           Crypto.Classes (Hash)
+import           Data.Text ()
+import qualified Data.Text as T
+import           Data.Time.Clock ()
+import qualified Data.Time.Clock as TC
 import           Filesystem.Path.CurrentOS (FilePath)
+import qualified Filesystem.Path.CurrentOS as FSC
 import qualified Options.Applicative as OA
 
 import           HaskDeep.Command.Options
@@ -42,8 +49,17 @@ haskdeep (Options ExecAudit       CompSHA1     r k) = execAudit       sha1hash  
 haskdeep (Options ExecAudit       CompSHA256   r k) = execAudit       sha256hash   r k
 haskdeep (Options ExecAudit       CompSkein512 r k) = execAudit       skein512hash r k
 
-execComputation :: Hash ctx a => ComputationMode a -> String -> FilePath -> FilePath -> IO ()
-execComputation cm cmd r k = HK.write k cmd =<< compute r cm
+execComputation :: Hash ctx a => ComputationMode a -> FilePath -> FilePath -> IO ()
+execComputation cm r k = do start   <- liftM show TC.getCurrentTime
+                            hashset <- compute r cm
+                            end     <- liftM show TC.getCurrentTime
+                            let comments = [ "Root directory: " `T.append` either id id (FSC.toText r)
+                                           , "Started at    : " `T.append` T.pack start
+                                           , "Ended at      : " `T.append` T.pack end
+                                           , "Files count   : " `T.append` T.pack (show $ HS.filesCount hashset)
+                                           , "Files size    : " `T.append` T.pack (show $ HS.sizeSum hashset)
+                                           ]
+                            HK.write k hashset comments
 
 execAudit :: Hash ctx a => ComputationMode a -> FilePath -> FilePath -> IO ()
 execAudit cm r k = do hashset1 <- HK.read k

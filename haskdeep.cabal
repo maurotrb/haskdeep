@@ -75,5 +75,7 @@ executable haskdeep
     , crypto-api           ==0.10.*
     , haskdeep             ==0.1.*
     , optparse-applicative ==0.4.*
+    , time                 ==1.4.*
     , system-filepath      ==0.4.*
+    , text               ==0.11.*
   ghc-options: -O -Wall -Werror
