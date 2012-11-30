@@ -20,7 +20,7 @@ Excute haskdeep without arguments and it will show you the help text:
 
     Available options:
       -a,--audit               Audit
-      -c,--computation ALGORITHM Computation mode: md5, sha1, sha256, skein512
+      -c,--computation MODE    Computation mode: md5, sha1, sha256, skein512
       -r,--root DIRNAME        Root directory
       -k,--known FILENAME      Known hashes file
       -h,--help                Show this help text

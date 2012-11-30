@@ -35,19 +35,18 @@ import           HaskDeep.HashSet ()
 import qualified HaskDeep.HashSet as HS
 import qualified HaskDeep.KnownHash as HK
 
-
 main :: IO ()
 main = OA.execParser optionsPI >>= haskdeep
 
 haskdeep :: Options -> IO ()
-haskdeep (Options ExecComputation CompMD5      r k) = execComputation md5hash      "md5"      r k
-haskdeep (Options ExecComputation CompSHA1     r k) = execComputation sha1hash     "sha1"     r k
-haskdeep (Options ExecComputation CompSHA256   r k) = execComputation sha256hash   "sha265"   r k
-haskdeep (Options ExecComputation CompSkein512 r k) = execComputation skein512hash "skein512" r k
-haskdeep (Options ExecAudit       CompMD5      r k) = execAudit       md5hash      r k
-haskdeep (Options ExecAudit       CompSHA1     r k) = execAudit       sha1hash     r k
-haskdeep (Options ExecAudit       CompSHA256   r k) = execAudit       sha256hash   r k
-haskdeep (Options ExecAudit       CompSkein512 r k) = execAudit       skein512hash r k
+haskdeep (Options OptComputation OptMD5      ir ik) = execComputation md5hash      ir ik
+haskdeep (Options OptComputation OptSHA1     ir ik) = execComputation sha1hash     ir ik
+haskdeep (Options OptComputation OptSHA256   ir ik) = execComputation sha256hash   ir ik
+haskdeep (Options OptComputation OptSkein512 ir ik) = execComputation skein512hash ir ik
+haskdeep (Options OptAudit       OptMD5      ir ik) = execAudit       md5hash      ir ik
+haskdeep (Options OptAudit       OptSHA1     ir ik) = execAudit       sha1hash     ir ik
+haskdeep (Options OptAudit       OptSHA256   ir ik) = execAudit       sha256hash   ir ik
+haskdeep (Options OptAudit       OptSkein512 ir ik) = execAudit       skein512hash ir ik
 
 execComputation :: Hash ctx a => ComputationMode a -> FilePath -> FilePath -> IO ()
 execComputation cm r k = do start   <- liftM show TC.getCurrentTime

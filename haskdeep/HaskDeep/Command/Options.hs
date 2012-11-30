@@ -13,8 +13,8 @@
 module HaskDeep.Command.Options
     (
      Options(..)
-    ,ExecutionTypeOpt(..)
-    ,ComputationModeOpt(..)
+    ,OptExecution(..)
+    ,OptCompMode(..)
     ,optionsPI
     )
 where
@@ -25,40 +25,36 @@ import           Filesystem.Path.CurrentOS (FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
 import           Options.Applicative
 
-data Options = Options
-    { exectype :: ExecutionTypeOpt
-    , compmode :: ComputationModeOpt
-    , root     :: FilePath
-    , known    :: FilePath }
+data Options = Options OptExecution OptCompMode FilePath FilePath
 
-data ExecutionTypeOpt = ExecComputation
-                      | ExecAudit
+data OptExecution = OptComputation
+                  | OptAudit
 
-data ComputationModeOpt = CompMD5
-                        | CompSHA1
-                        | CompSHA256
-                        | CompSkein512
+data OptCompMode = OptMD5
+                 | OptSHA1
+                 | OptSHA256
+                 | OptSkein512
 
 fpReader :: String -> Maybe FilePath
 fpReader fp = Just $ FSC.decodeString fp
 
-compReader :: String -> Maybe ComputationModeOpt
-compReader "md5"      = Just CompMD5
-compReader "sha1"     = Just CompSHA1
-compReader "sha256"   = Just CompSHA256
-compReader "skein512" = Just CompSkein512
+compReader :: String -> Maybe OptCompMode
+compReader "md5"      = Just OptMD5
+compReader "sha1"     = Just OptSHA1
+compReader "sha256"   = Just OptSHA256
+compReader "skein512" = Just OptSkein512
 compReader _          = Nothing
 
 optionsP :: Parser Options
 optionsP = Options
-           <$> flag ExecComputation ExecAudit
+           <$> flag OptComputation OptAudit
                    ( long "audit"
                      & short 'a'
                      & help "Audit" )
             <*> nullOption
                     ( long "computation"
                       & short 'c'
-                      & metavar "ALGORITHM"
+                      & metavar "MODE"
                       & help "Computation mode: md5, sha1, sha256, skein512"
                       & reader compReader)
             <*> nullOption
