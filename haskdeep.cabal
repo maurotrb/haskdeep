@@ -39,7 +39,7 @@ library
     , system-fileio      ==0.3.*
     , system-filepath    ==0.4.*
     , text               ==0.11.*
-  ghc-options: -O -Wall -Werror
+  ghc-options: -Wall
 
 executable haskdeep
   hs-source-dirs:   haskdeep
@@ -54,7 +54,7 @@ executable haskdeep
     , time                 ==1.4.*
     , system-filepath      ==0.4.*
     , text                 ==0.11.*
-  ghc-options: -O -Wall -Werror
+  ghc-options: -Wall
 
 source-repository head
   type:     git
