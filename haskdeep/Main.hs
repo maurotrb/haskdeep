@@ -7,8 +7,8 @@
 -- Stability   :  experimental
 -- Portability :  unknown
 --
--- Computes hashes traversing recursively through the directory structure.
--- Use a list of known hashes to audit a set of files.
+-- Computes hashes traversing recursively through a directory structure.
+-- Uses a list of known hashes to audit a set of files.
 
 module Main where
 

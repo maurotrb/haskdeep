@@ -17,13 +17,19 @@ description:
     The known hashes can be used to audit the same directory structure of a copy
     of it.
 category:            Console, Cryptography, System
+extra-source-files:
+    README.md
 
 library
   hs-source-dirs:   src
   exposed-modules:
+    HaskDeep
     HaskDeep.Computation
+    HaskDeep.ComputationMode
+    HaskDeep.Configuration
     HaskDeep.HashSet
-    HaskDeep.KnownHash
+    HaskDeep.KnownHash.Reader
+    HaskDeep.KnownHash.Writer
   build-depends:
       attoparsec         ==0.10.*
     , attoparsec-conduit ==0.5.*
@@ -39,6 +45,8 @@ library
     , system-fileio      ==0.3.*
     , system-filepath    ==0.4.*
     , text               ==0.11.*
+    , regex-tdfa         ==1.1.*
+    , regex-tdfa-text    ==1.0.*
   ghc-options: -Wall
 
 executable haskdeep
@@ -46,6 +54,7 @@ executable haskdeep
   main-is:          Main.hs
   other-modules:
     HaskDeep.Command.Main
+    HaskDeep.Command.Options
   build-depends:
       base                 ==4.5.*
     , crypto-api           ==0.10.*

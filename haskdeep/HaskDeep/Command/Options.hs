@@ -21,11 +21,15 @@ where
 
 import           Prelude hiding (FilePath)
 
+import           Data.Text (Text)
+import qualified Data.Text as T
 import           Filesystem.Path.CurrentOS (FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
 import           Options.Applicative
 
-data Options = Options OptExecution OptCompMode FilePath FilePath
+import           HaskDeep
+
+data Options = Options OptExecution OptCompMode HaskDeepConfiguration
 
 data OptExecution = OptComputation
                   | OptAudit
@@ -35,8 +39,59 @@ data OptCompMode = OptMD5
                  | OptSHA256
                  | OptSkein512
 
+optionsPI :: ParserInfo Options
+optionsPI = info (optionsP <**> helper)
+            ( fullDesc
+              & progDesc "Computes hashes and audit a set of files"
+              & header "haskdeep - file hashing and audit" )
+
+configurationP :: Parser HaskDeepConfiguration
+configurationP = HaskDeepConfiguration
+                 <$> nullOption
+                         ( long "root"
+                           & short 'r'
+                           & metavar "DIRNAME"
+                           & help "root directory - default current directory"
+                           & reader fpReader
+                           & value (rootDirectory defaultHaskDeepConfiguration))
+                 <*> nullOption
+                         ( long "known"
+                           & short 'k'
+                           & metavar "FILENAME"
+                           & help "known hashes file - default known.haskdeep"
+                           & reader fpReader
+                           & value (knownHashes defaultHaskDeepConfiguration))
+                 <*> nullOption
+                         ( long "ignore"
+                           & short 'i'
+                           & metavar "RULE"
+                           & help "regex to ignore files or directories"
+                           & reader ignReader
+                           & value (ignoreRule defaultHaskDeepConfiguration))
+
+optionsP :: Parser Options
+optionsP = Options
+           <$> subparser
+                   ( command "compute"
+                     (info (pure OptComputation)
+                               (progDesc "Compute"))
+                     & command "audit"
+                     (info (pure OptAudit)
+                               (progDesc "Audit")))
+           <*> nullOption
+                   ( long "computation"
+                     & short 'c'
+                     & metavar "MODE"
+                     & help "md5 | sha1 | sha256 | skein512 - default md5"
+                     & reader compReader
+                     & value OptMD5)
+           <*> configurationP
+
 fpReader :: String -> Maybe FilePath
 fpReader fp = Just $ FSC.decodeString fp
+
+ignReader :: String -> Maybe (Maybe Text)
+ignReader = Just . Just . T.pack
 
 compReader :: String -> Maybe OptCompMode
 compReader "md5"      = Just OptMD5
@@ -44,34 +99,3 @@ compReader "sha1"     = Just OptSHA1
 compReader "sha256"   = Just OptSHA256
 compReader "skein512" = Just OptSkein512
 compReader _          = Nothing
-
-optionsP :: Parser Options
-optionsP = Options
-           <$> flag OptComputation OptAudit
-                   ( long "audit"
-                     & short 'a'
-                     & help "Audit" )
-            <*> nullOption
-                    ( long "computation"
-                      & short 'c'
-                      & metavar "MODE"
-                      & help "Computation mode: md5, sha1, sha256, skein512"
-                      & reader compReader)
-            <*> nullOption
-                    ( long "root"
-                      & short 'r'
-                      & metavar "DIRNAME"
-                      & help "Root directory"
-                      & reader fpReader)
-            <*> nullOption
-                    ( long "known"
-                      & short 'k'
-                      & metavar "FILENAME"
-                      & help "Known hashes file"
-                      & reader fpReader)
-
-optionsPI :: ParserInfo Options
-optionsPI = info (optionsP <**> helper)
-            ( fullDesc
-              & progDesc "Computes hashes and audit a set of files"
-              & header "haskdeep - file hashing and audit" )
