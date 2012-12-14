@@ -51,21 +51,21 @@ configurationP = HaskDeepConfiguration
                          ( long "root"
                            & short 'r'
                            & metavar "DIRNAME"
-                           & help "root directory - default current directory"
+                           & help "Root directory - default current directory"
                            & reader fpReader
                            & value (rootDirectory defaultHaskDeepConfiguration))
                  <*> nullOption
                          ( long "known"
                            & short 'k'
                            & metavar "FILENAME"
-                           & help "known hashes file - default known.haskdeep"
+                           & help "Known hashes file - default known.haskdeep"
                            & reader fpReader
                            & value (knownHashes defaultHaskDeepConfiguration))
                  <*> nullOption
                          ( long "ignore"
                            & short 'i'
                            & metavar "RULE"
-                           & help "regex to ignore files or directories"
+                           & help "Regex to ignore files or directories"
                            & reader ignReader
                            & value (ignoreRule defaultHaskDeepConfiguration))
 
@@ -74,10 +74,10 @@ optionsP = Options
            <$> subparser
                    ( command "compute"
                      (info (pure OptComputation)
-                               (progDesc "Compute"))
+                               (progDesc "Computes file hashes and saves them to known hashes file"))
                      & command "audit"
                      (info (pure OptAudit)
-                               (progDesc "Audit")))
+                               (progDesc "Audit files comparing them to known hashes")))
            <*> nullOption
                    ( long "computation"
                      & short 'c'
