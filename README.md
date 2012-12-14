@@ -10,7 +10,7 @@ files or a copy of them.
 
 Quick start
 -----------
-Excute haskdeep without arguments and it will show you the help text:
+Execute haskdeep without arguments and it will show you the help text:
 
     user@host:~$ haskdeep
 
