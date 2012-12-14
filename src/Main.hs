@@ -10,7 +10,7 @@
 -- Computes hashes traversing recursively through a directory structure.
 -- Uses a list of known hashes to audit a set of files.
 
-module HaskDeep.Command.Main
+module Main
     (
      main
     )
@@ -22,7 +22,7 @@ import           Crypto.Classes (Hash)
 import qualified Options.Applicative as OA
 
 import           HaskDeep
-import           HaskDeep.Command.Options
+import           Options
 
 main :: IO ()
 main = OA.execParser optionsPI >>= haskdeep

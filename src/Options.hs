@@ -10,7 +10,7 @@
 -- Computes hashes traversing recursively through the directory structure.
 -- Use a list of known hashes to audit a set of files.
 
-module HaskDeep.Command.Options
+module Options
     (
      Options(..)
     ,OptExecution(..)
