@@ -26,10 +26,10 @@ where
 
 import           Data.Bits ((.&.), shiftR)
 
-import           Crypto.Hash.MD5 (MD5)
-import           Crypto.Hash.SHA1 (SHA1)
-import           Crypto.Hash.SHA256 (SHA256)
-import           Crypto.Hash.Skein512 (Skein512)
+import           Crypto.Hash.CryptoAPI (MD5)
+import           Crypto.Hash.CryptoAPI (SHA1)
+import           Crypto.Hash.CryptoAPI (SHA256)
+import           Crypto.Hash.CryptoAPI (Skein512_512)
 import           Data.ByteString (ByteString)
 import qualified Data.ByteString as BS
 import qualified Data.Serialize as S
@@ -54,7 +54,7 @@ sha256hash :: ComputationMode SHA256
 sha256hash = ComputationMode "sha256" (toHex . S.encode)
 
 -- | Skein512 computation.
-skein512hash :: ComputationMode Skein512
+skein512hash :: ComputationMode Skein512_512
 skein512hash = ComputationMode "skein512" (toHex . S.encode)
 
 -- Only with ByteString 0.10

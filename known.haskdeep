@@ -1,0 +1,15 @@
+%%%% HASHDEEP-1.0
+%%%% size,md5,filename
+## Root directory: /home/mauro/tmp/context/
+## Ignore rule   : 
+## Files count   : 8
+## Files size    : 60119
+## 
+5,666555125d551efe6b9d2b577f6d6fe9,hello-mpgraph.mp
+4536,facc1eec6e79e04e366016dfaab87a5f,hello.log
+36324,a5681b999eef86a071497466e9f815b6,hello.pdf
+468,2769d16dfb3aa4dcf673c7f380b82f87,hello.tex
+339,9b70a833b900f45303e47351a0121b2a,hello.tmp
+17722,897497b249310426f779a88876006bcf,hello.tui
+720,9d4ff85c0adbd5546a5aefda02c05d5c,hello.tuo
+5,666555125d551efe6b9d2b577f6d6fe9,mpgraph.mp
