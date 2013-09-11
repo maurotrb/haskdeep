@@ -66,7 +66,7 @@ executable haskdeep
   build-depends:
       attoparsec           ==0.10.*
     , attoparsec-conduit   ==0.5.*
-    , base                 ==4.5.*
+    , base                 ==4.6.*
     , bytestring           ==0.9.*
     , cereal               ==0.3.*
     , conduit              ==0.5.*
@@ -75,7 +75,7 @@ executable haskdeep
     , crypto-api           ==0.10.*
     , crypto-conduit       ==0.4.*
     , filesystem-conduit   ==0.5.*
-    , optparse-applicative ==0.4.*
+    , optparse-applicative ==0.5.*
     , system-fileio        ==0.3.*
     , system-filepath      ==0.4.*
     , text                 ==0.11.*

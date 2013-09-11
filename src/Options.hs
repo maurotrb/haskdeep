@@ -42,32 +42,32 @@ data OptCompMode = OptMD5
 optionsPI :: ParserInfo Options
 optionsPI = info (optionsP <**> helper)
             ( fullDesc
-              & progDesc "Computes hashes and audit a set of files"
-              & header "haskdeep - file hashing and audit" )
+              <> progDesc "Computes hashes and audit a set of files"
+              <> header "haskdeep - file hashing and audit" )
 
 configurationP :: Parser HaskDeepConfiguration
 configurationP = HaskDeepConfiguration
                  <$> nullOption
                          ( long "root"
-                           & short 'r'
-                           & metavar "DIRNAME"
-                           & help "Root directory - default current directory"
-                           & reader fpReader
-                           & value (rootDirectory defaultHaskDeepConfiguration))
+                           <> short 'r'
+                           <> metavar "DIRNAME"
+                           <> help "Root directory - default current directory"
+                           <> reader fpReader
+                           <> value (rootDirectory defaultHaskDeepConfiguration))
                  <*> nullOption
                          ( long "known"
-                           & short 'k'
-                           & metavar "FILENAME"
-                           & help "Known hashes file - default known.haskdeep"
-                           & reader fpReader
-                           & value (knownHashes defaultHaskDeepConfiguration))
+                           <> short 'k'
+                           <> metavar "FILENAME"
+                           <> help "Known hashes file - default known.haskdeep"
+                           <> reader fpReader
+                           <> value (knownHashes defaultHaskDeepConfiguration))
                  <*> nullOption
                          ( long "ignore"
-                           & short 'i'
-                           & metavar "RULE"
-                           & help "Regex to ignore files or directories"
-                           & reader ignReader
-                           & value (ignoreRule defaultHaskDeepConfiguration))
+                           <> short 'i'
+                           <> metavar "RULE"
+                           <> help "Regex to ignore files or directories"
+                           <> reader ignReader
+                           <> value (ignoreRule defaultHaskDeepConfiguration))
 
 optionsP :: Parser Options
 optionsP = Options
@@ -75,27 +75,27 @@ optionsP = Options
                    ( command "compute"
                      (info (pure OptComputation)
                                (progDesc "Computes file hashes and saves them to known hashes file"))
-                     & command "audit"
+                     <> command "audit"
                      (info (pure OptAudit)
                                (progDesc "Audit files comparing them to known hashes")))
            <*> nullOption
                    ( long "computation"
-                     & short 'c'
-                     & metavar "MODE"
-                     & help "md5 | sha1 | sha256 | skein512 - default md5"
-                     & reader compReader
-                     & value OptMD5)
+                     <> short 'c'
+                     <> metavar "MODE"
+                     <> help "md5 | sha1 | sha256 | skein512 - default md5"
+                     <> reader compReader
+                     <> value OptMD5)
            <*> configurationP
 
-fpReader :: String -> Maybe FilePath
-fpReader fp = Just $ FSC.decodeString fp
+fpReader :: String -> Either ParseError FilePath
+fpReader fp = Right $ FSC.decodeString fp
 
-ignReader :: String -> Maybe (Maybe Text)
-ignReader = Just . Just . T.pack
+ignReader :: String -> Either ParseError (Maybe Text)
+ignReader = Right . Just . T.pack
 
-compReader :: String -> Maybe OptCompMode
-compReader "md5"      = Just OptMD5
-compReader "sha1"     = Just OptSHA1
-compReader "sha256"   = Just OptSHA256
-compReader "skein512" = Just OptSkein512
-compReader _          = Nothing
+compReader :: String -> Either ParseError OptCompMode
+compReader "md5"      = Right OptMD5
+compReader "sha1"     = Right OptSHA1
+compReader "sha256"   = Right OptSHA256
+compReader "skein512" = Right OptSkein512
+compReader _          = Left $ ShowHelpText
