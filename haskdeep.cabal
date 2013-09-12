@@ -66,7 +66,7 @@ executable haskdeep
   build-depends:
       attoparsec           ==0.10.*
     , attoparsec-conduit   ==1.0.*
-    , base                 ==4.6.*
+    , base                 ==4.*
     , base16-bytestring    ==0.1.*
     , bytestring           ==0.9.*
     , cereal               ==0.3.*
