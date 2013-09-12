@@ -24,10 +24,7 @@ module HaskDeep.ComputationMode
     )
 where
 
-import           Crypto.Hash.CryptoAPI (MD5)
-import           Crypto.Hash.CryptoAPI (SHA1)
-import           Crypto.Hash.CryptoAPI (SHA256)
-import           Crypto.Hash.CryptoAPI (Skein512_512)
+import           Crypto.Hash.CryptoAPI (MD5, SHA1, SHA256, Skein512_512)
 import           Data.ByteString (ByteString)
 import qualified Data.ByteString.Base16 as BB16
 import qualified Data.Serialize as S

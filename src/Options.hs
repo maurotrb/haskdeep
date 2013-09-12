@@ -98,4 +98,4 @@ compReader "md5"      = Right OptMD5
 compReader "sha1"     = Right OptSHA1
 compReader "sha256"   = Right OptSHA256
 compReader "skein512" = Right OptSkein512
-compReader _          = Left $ ShowHelpText
+compReader _          = Left ShowHelpText
