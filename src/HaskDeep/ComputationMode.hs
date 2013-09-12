@@ -24,14 +24,12 @@ module HaskDeep.ComputationMode
     )
 where
 
-import           Data.Bits ((.&.), shiftR)
-
 import           Crypto.Hash.CryptoAPI (MD5)
 import           Crypto.Hash.CryptoAPI (SHA1)
 import           Crypto.Hash.CryptoAPI (SHA256)
 import           Crypto.Hash.CryptoAPI (Skein512_512)
 import           Data.ByteString (ByteString)
-import qualified Data.ByteString as BS
+import qualified Data.ByteString.Base16 as BB16
 import qualified Data.Serialize as S
 import qualified Data.Text as T
 
@@ -43,41 +41,16 @@ data ComputationMode a = ComputationMode
 
 -- | MD5 computation.
 md5hash  :: ComputationMode MD5
-md5hash  = ComputationMode "md5" (toHex . S.encode)
+md5hash  = ComputationMode "md5" (BB16.encode . S.encode)
 
 -- | SHA1 computation.
 sha1hash :: ComputationMode SHA1
-sha1hash = ComputationMode "sha1" (toHex . S.encode)
+sha1hash = ComputationMode "sha1" (BB16.encode . S.encode)
 
 -- | SHA256 computation.
 sha256hash :: ComputationMode SHA256
-sha256hash = ComputationMode "sha256" (toHex . S.encode)
+sha256hash = ComputationMode "sha256" (BB16.encode . S.encode)
 
 -- | Skein512 computation.
 skein512hash :: ComputationMode Skein512_512
-skein512hash = ComputationMode "skein512" (toHex . S.encode)
-
--- Only with ByteString 0.10
---toHex :: ByteString -> ByteString
---toHex = BS.concat . BL.toChunks . BB.toLazyByteString . BA.byteStringHexFixed
-
--- Taken from
--- http://stackoverflow.com/questions/10099921/efficiently-turn-a-bytestring-into-a-hex-representation
-toHex :: ByteString -> ByteString
-toHex bs0 =
-    fst $ BS.unfoldrN (BS.length bs0 * 2) go (Left bs0)
-  where
-    go (Left bs) =
-        case BS.uncons bs of
-            Nothing -> Nothing
-            Just (w, bs') ->
-                let w1 = w `shiftR` 4
-                    w2 = w .&. 15
-                    c1 = toC w1
-                    c2 = toC w2
-                 in Just (c1, Right (c2, bs'))
-    go (Right (c, bs)) = Just (c, Left bs)
-
-    toC w
-        | w < 10 = w + 48
-        | otherwise = w + 87
+skein512hash = ComputationMode "skein512" (BB16.encode . S.encode)
