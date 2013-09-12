@@ -87,4 +87,8 @@ executable haskdeep
 
 source-repository head
   type:     git
-  location: git://github.com/maurotrb/haskdeep.git
+  location: https://github.com/maurotrb/haskdeep.git
+
+source-repository head
+  type:     git
+  location: https://maurotrb@bitbucket.org/maurotrb/haskdeep.git
