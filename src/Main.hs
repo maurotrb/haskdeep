@@ -28,6 +28,7 @@ main :: IO ()
 main = OA.customExecParser (OA.prefs OA.showHelpOnError) optionsPI >>= haskdeep
 
 haskdeep :: Options -> IO ()
+haskdeep Version                                   = putStrLn haskdeepVersion
 haskdeep (Options OptComputation OptMD5      conf) = execComputation conf md5hash
 haskdeep (Options OptComputation OptSHA1     conf) = execComputation conf sha1hash
 haskdeep (Options OptComputation OptSHA256   conf) = execComputation conf sha256hash

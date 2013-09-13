@@ -16,6 +16,7 @@ module Options
     ,OptExecution(..)
     ,OptCompMode(..)
     ,optionsPI
+    ,haskdeepVersion
     )
 where
 
@@ -29,7 +30,11 @@ import           Options.Applicative
 
 import           HaskDeep
 
-data Options = Options OptExecution OptCompMode HaskDeepConfiguration
+haskdeepVersion :: String
+haskdeepVersion = "haskdeep 0.1.0.0 - file hashing and audit"
+
+data Options = Version
+             | Options OptExecution OptCompMode HaskDeepConfiguration
 
 data OptExecution = OptComputation
                   | OptAudit
@@ -40,10 +45,10 @@ data OptCompMode = OptMD5
                  | OptSkein512
 
 optionsPI :: ParserInfo Options
-optionsPI = info (optionsP <**> helper)
+optionsPI = info (helper <*> optionsP)
             ( fullDesc
               <> progDesc "Computes hashes and audit a set of files"
-              <> header "haskdeep - file hashing and audit" )
+              <> header haskdeepVersion)
 
 configurationP :: Parser HaskDeepConfiguration
 configurationP = HaskDeepConfiguration
@@ -67,25 +72,31 @@ configurationP = HaskDeepConfiguration
                            <> metavar "RULE"
                            <> help "Regex to ignore files or directories"
                            <> reader ignReader
-                           <> value (ignoreRule defaultHaskDeepConfiguration))
+                           <> value (ignoreRule defaultHaskDeepConfiguration)
+                           <> hidden )
 
 optionsP :: Parser Options
-optionsP = Options
-           <$> subparser
-                   ( command "compute"
-                     (info (pure OptComputation)
-                               (progDesc "Computes file hashes and saves them to known hashes file"))
-                     <> command "audit"
-                     (info (pure OptAudit)
-                               (progDesc "Audit files comparing them to known hashes")))
-           <*> nullOption
-                   ( long "computation"
-                     <> short 'c'
-                     <> metavar "MODE"
-                     <> help "md5 | sha1 | sha256 | skein512 - default md5"
-                     <> reader compReader
-                     <> value OptMD5)
-           <*> configurationP
+optionsP = flag' Version
+                   ( long "version"
+                     <> short 'v'
+                     <> help "Show version information"
+                     <> hidden )
+           <|> ( Options
+                 <$> subparser
+                         ( command "compute"
+                           (info (pure OptComputation)
+                            (progDesc "Computes file hashes and saves them to known hashes file"))
+                           <> command "audit"
+                           (info (pure OptAudit)
+                            (progDesc "Audit files comparing them to known hashes")))
+                 <*> nullOption
+                         ( long "computation"
+                           <> short 'c'
+                           <> metavar "MODE"
+                           <> help "md5 | sha1 | sha256 | skein512 - default md5"
+                           <> reader compReader
+                           <> value OptMD5)
+                 <*> configurationP )
 
 fpReader :: String -> Either ParseError FilePath
 fpReader fp = Right $ FSC.decodeString fp
