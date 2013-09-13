@@ -25,7 +25,7 @@ import           HaskDeep
 import           Options
 
 main :: IO ()
-main = OA.execParser optionsPI >>= haskdeep
+main = OA.customExecParser (OA.prefs OA.showHelpOnError) optionsPI >>= haskdeep
 
 haskdeep :: Options -> IO ()
 haskdeep (Options OptComputation OptMD5      conf) = execComputation conf md5hash
