@@ -48,7 +48,9 @@ description:
     .
     Heavily inspired by @hashdeep@: <http://md5deep.sourceforge.net/>
 category:            Console, Cryptography, System
-extra-source-files:  README.md
+extra-source-files:
+    README.md
+    CHANGELOG.md
 homepage:            https://github.com/maurotrb/haskdeep
 bug-reports:         https://github.com/maurotrb/haskdeep/issues
 
