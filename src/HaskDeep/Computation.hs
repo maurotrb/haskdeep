@@ -32,6 +32,7 @@ import qualified Data.Conduit as C
 import qualified Data.Conduit.Filesystem as CF
 import qualified Data.Conduit.List as CL
 import qualified Data.Text as T
+import           Data.Time (UTCTime)
 import qualified Filesystem as FS
 import           Filesystem.Path.CurrentOS (FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
@@ -50,12 +51,15 @@ compute :: Hash ctx a => HaskDeepConfiguration
 compute conf cm = CF.traverse False root $$ CL.foldM insert_hash empty_with_symbol
     where
       root              = rootDirectory conf
-      rule              = ignoreRule conf
+      regex             = excludeRegex conf
+      mod_from          = includeModFrom conf
+      mod_upto          = includeModUpTo conf
       empty_with_symbol = HS.setSymbol (symbol cm) HS.empty
 
       insert_hash :: HashSet -> FilePath -> IO HashSet
       insert_hash hs fp = do let fpt = fpToText $ relativize root fp
-                             if ignore fpt rule
+                             fmt <- FS.getModified fp
+                             if (excRegex fpt regex) || (excMod fmt mod_from mod_upto)
                              then return hs
                              else do s <- FS.getSize fp
                                      h <- liftM (runComputation cm) $ C.runResourceT
@@ -68,6 +72,12 @@ relativize root fp = fromJust $ FSC.stripPrefix root fp
 fpToText :: FilePath -> T.Text
 fpToText = either id id . FSC.toText
 
-ignore :: T.Text -> Maybe T.Text -> Bool
-ignore fpt (Just rule) = fpt =~ rule
-ignore _   Nothing     = False
+excRegex :: T.Text -> Maybe T.Text -> Bool
+excRegex fpt (Just rule) = fpt =~ rule
+excRegex _   Nothing     = False
+
+excMod :: UTCTime -> Maybe UTCTime -> Maybe UTCTime -> Bool
+excMod fmt (Just modFrom) (Just modUpTo) = (fmt < modFrom) || (fmt > modUpTo)
+excMod fmt (Just modFrom) Nothing        = fmt < modFrom
+excMod fmt Nothing        (Just modUpTo) = fmt > modUpTo
+excMod _   Nothing        Nothing        = False

@@ -23,14 +23,17 @@ where
 import           Prelude hiding (FilePath)
 
 import           Data.Text (Text)
+import           Data.Time (UTCTime)
 import           Filesystem.Path (FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
 
 -- | HaskDeep configuration.
 data HaskDeepConfiguration = HaskDeepConfiguration
-    { rootDirectory   :: FilePath    -- ^ Root directory
-    , knownHashes     :: FilePath    -- ^ Known hashes file
-    , ignoreRule      :: Maybe Text  -- ^ Ignore rule (Regex)
+    { rootDirectory   :: FilePath      -- ^ Root directory
+    , knownHashes     :: FilePath      -- ^ Known hashes file
+    , excludeRegex    :: Maybe Text    -- ^ Exclude rule (Regex)
+    , includeModFrom  :: Maybe UTCTime -- ^ Include file modified from
+    , includeModUpTo  :: Maybe UTCTime -- ^ Include file modified up to
     }
 
 -- | HaskDeep default configuration.
@@ -38,5 +41,7 @@ defaultHaskDeepConfiguration :: HaskDeepConfiguration
 defaultHaskDeepConfiguration = HaskDeepConfiguration
     { rootDirectory   = FSC.decodeString "."
     , knownHashes     = FSC.decodeString "known.haskdeep"
-    , ignoreRule      = Nothing
+    , excludeRegex    = Nothing
+    , includeModFrom  = Nothing
+    , includeModUpTo  = Nothing
     }

@@ -24,9 +24,12 @@ import           Prelude hiding (FilePath)
 
 import           Data.Text (Text)
 import qualified Data.Text as T
+import           Data.Time (UTCTime)
+import qualified Data.Time as DT
 import           Filesystem.Path.CurrentOS (FilePath)
 import qualified Filesystem.Path.CurrentOS as FSC
 import           Options.Applicative
+import qualified System.Locale as SL
 
 import           HaskDeep
 
@@ -67,12 +70,28 @@ configurationP = HaskDeepConfiguration
                            <> reader fpReader
                            <> value (knownHashes defaultHaskDeepConfiguration))
                  <*> nullOption
-                         ( long "ignore"
-                           <> short 'i'
-                           <> metavar "RULE"
-                           <> help "Regex to ignore files or directories"
-                           <> reader ignReader
-                           <> value (ignoreRule defaultHaskDeepConfiguration)
+                         ( long "excl-regex"
+                           <> short 'e'
+                           <> metavar "REGEX"
+                           <> help "Exclude files or directories based on regex"
+                           <> reader regexReader
+                           <> value (excludeRegex defaultHaskDeepConfiguration)
+                           <> hidden )
+                 <*> nullOption
+                         ( long "incl-mod-from"
+                           <> short 'f'
+                           <> metavar "DATE"
+                           <> help "Include files modified from yyyy-mm-ddThh:mm:ssZ"
+                           <> reader timeReader
+                           <> value (includeModFrom defaultHaskDeepConfiguration)
+                           <> hidden )
+                 <*> nullOption
+                         ( long "incl-mod-upto"
+                           <> short 't'
+                           <> metavar "DATE"
+                           <> help "Include files modified up to yyyy-mm-ddThh:mm:ssZ"
+                           <> reader timeReader
+                           <> value (includeModUpTo defaultHaskDeepConfiguration)
                            <> hidden )
 
 optionsP :: Parser Options
@@ -98,15 +117,22 @@ optionsP = flag' Version
                            <> value OptMD5)
                  <*> configurationP )
 
-fpReader :: String -> Either ParseError FilePath
-fpReader fp = Right $ FSC.decodeString fp
-
-ignReader :: String -> Either ParseError (Maybe Text)
-ignReader = Right . Just . T.pack
-
 compReader :: String -> Either ParseError OptCompMode
 compReader "md5"      = Right OptMD5
 compReader "sha1"     = Right OptSHA1
 compReader "sha256"   = Right OptSHA256
 compReader "skein512" = Right OptSkein512
 compReader _          = Left ShowHelpText
+
+fpReader :: String -> Either ParseError FilePath
+fpReader fp = Right $ FSC.decodeString fp
+
+regexReader :: String -> Either ParseError (Maybe Text)
+regexReader = Right . Just . T.pack
+
+timeReader :: String -> Either ParseError (Maybe UTCTime)
+timeReader dt = case parsedTime of
+                  (Just _) -> Right parsedTime
+                  Nothing  -> Left ShowHelpText
+    where
+      parsedTime = DT.parseTime SL.defaultTimeLocale "%FT%TZ" dt
