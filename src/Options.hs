@@ -25,11 +25,8 @@ import           Prelude hiding (FilePath)
 import           Data.Text (Text)
 import qualified Data.Text as T
 import           Data.Time (UTCTime)
-import qualified Data.Time as DT
-import           Filesystem.Path.CurrentOS (FilePath)
-import qualified Filesystem.Path.CurrentOS as FSC
+import qualified Data.Time.Format as DTF
 import           Options.Applicative
-import qualified System.Locale as SL
 
 import           HaskDeep
 
@@ -55,42 +52,37 @@ optionsPI = info (helper <*> optionsP)
 
 configurationP :: Parser HaskDeepConfiguration
 configurationP = HaskDeepConfiguration
-                 <$> nullOption
+                 <$> strOption
                          ( long "root"
                            <> short 'r'
                            <> metavar "DIRNAME"
                            <> help "Root directory - default current directory"
-                           <> reader fpReader
                            <> value (rootDirectory defaultHaskDeepConfiguration))
-                 <*> nullOption
+                 <*> strOption
                          ( long "known"
                            <> short 'k'
                            <> metavar "FILENAME"
                            <> help "Known hashes file - default known.haskdeep"
-                           <> reader fpReader
                            <> value (knownHashes defaultHaskDeepConfiguration))
-                 <*> nullOption
+                 <*> option (str >>= parseText)
                          ( long "excl-regex"
                            <> short 'e'
                            <> metavar "REGEX"
                            <> help "Exclude files or directories based on regex"
-                           <> reader regexReader
                            <> value (excludeRegex defaultHaskDeepConfiguration)
                            <> hidden )
-                 <*> nullOption
+                 <*> option (str >>= parseTime)
                          ( long "incl-mod-from"
                            <> short 'f'
                            <> metavar "DATE"
                            <> help "Include files modified from yyyy-mm-ddThh:mm:ssZ"
-                           <> reader timeReader
                            <> value (includeModFrom defaultHaskDeepConfiguration)
                            <> hidden )
-                 <*> nullOption
+                 <*> option (str >>= parseTime)
                          ( long "incl-mod-upto"
                            <> short 't'
                            <> metavar "DATE"
                            <> help "Include files modified up to yyyy-mm-ddThh:mm:ssZ"
-                           <> reader timeReader
                            <> value (includeModUpTo defaultHaskDeepConfiguration)
                            <> hidden )
 
@@ -108,31 +100,29 @@ optionsP = flag' Version
                            <> command "audit"
                            (info (pure OptAudit)
                             (progDesc "Audit files comparing them to known hashes")))
-                 <*> nullOption
+                 <*> option (str >>= parseOptCompMode)
                          ( long "computation"
                            <> short 'c'
                            <> metavar "MODE"
                            <> help "md5 | sha1 | sha256 | skein512 - default md5"
-                           <> reader compReader
                            <> value OptMD5)
                  <*> configurationP )
 
-compReader :: String -> Either ParseError OptCompMode
-compReader "md5"      = Right OptMD5
-compReader "sha1"     = Right OptSHA1
-compReader "sha256"   = Right OptSHA256
-compReader "skein512" = Right OptSkein512
-compReader _          = Left ShowHelpText
 
-fpReader :: String -> Either ParseError FilePath
-fpReader fp = Right $ FSC.decodeString fp
+parseOptCompMode :: String -> ReadM OptCompMode
+parseOptCompMode "md5"      = return OptMD5
+parseOptCompMode "sha1"     = return OptSHA1
+parseOptCompMode "sha256"   = return OptSHA256
+parseOptCompMode "skein512" = return OptSkein512
+parseOptCompMode _          = readerAbort ShowHelpText
 
-regexReader :: String -> Either ParseError (Maybe Text)
-regexReader = Right . Just . T.pack
+parseText :: String -> ReadM (Maybe Text)
+parseText s = return $ Just $ T.pack s
 
-timeReader :: String -> Either ParseError (Maybe UTCTime)
-timeReader dt = case parsedTime of
-                  (Just _) -> Right parsedTime
-                  Nothing  -> Left ShowHelpText
+parseTime :: String -> ReadM (Maybe UTCTime)
+parseTime s = case parsedTime of
+                (Just _) -> return parsedTime
+                Nothing  -> readerAbort ShowHelpText
     where
-      parsedTime = DT.parseTime SL.defaultTimeLocale "%FT%TZ" dt
+      parsedTime = DTF.parseTimeM True DTF.defaultTimeLocale "%FT%TZ" s
+

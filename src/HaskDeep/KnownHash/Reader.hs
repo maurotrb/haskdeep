@@ -22,6 +22,7 @@ where
 
 import           Control.Applicative ((<*), many)
 import           Control.Monad (liftM)
+import           Control.Monad.Trans.Resource (runResourceT)
 import           Data.Maybe(fromJust)
 import           Data.Word (Word8)
 import           Prelude hiding (FilePath)
@@ -32,12 +33,11 @@ import qualified Data.Attoparsec.Char8 as A8
 import qualified Data.Attoparsec.Combinator as AC
 import qualified Data.ByteString.Char8 as B8
 import           Data.Conduit (($$))
-import qualified Data.Conduit as C
 import qualified Data.Conduit.Attoparsec as CA
-import qualified Data.Conduit.Filesystem as CF
+import qualified Data.Conduit.Binary as CB
 import           Data.Text ()
 import qualified Data.Text.Encoding as TE
-import           Filesystem.Path ()
+import           System.FilePath ()
 
 import           HaskDeep.Configuration
 import           HaskDeep.HashSet (HashSet, HashInfo(..))
@@ -46,8 +46,8 @@ import qualified HaskDeep.HashSet as HS
 -- | Read known hashes file into an @HashSet@.
 readHashes :: HaskDeepConfiguration -- ^ Configuration
            -> IO HashSet            -- ^ @HashSet@ red from file
-readHashes conf = liftM HS.fromList $ C.runResourceT
-                  $ CF.sourceFile (knownHashes conf) $$ CA.sinkParser knownHashesP
+readHashes conf = liftM HS.fromList $ runResourceT
+                  $ CB.sourceFile (knownHashes conf) $$ CA.sinkParser knownHashesP
 
 
 -- Parsers

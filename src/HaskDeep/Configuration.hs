@@ -24,8 +24,7 @@ import           Prelude hiding (FilePath)
 
 import           Data.Text (Text)
 import           Data.Time (UTCTime)
-import           Filesystem.Path (FilePath)
-import qualified Filesystem.Path.CurrentOS as FSC
+import           System.FilePath (FilePath)
 
 -- | HaskDeep configuration.
 data HaskDeepConfiguration = HaskDeepConfiguration
@@ -39,8 +38,8 @@ data HaskDeepConfiguration = HaskDeepConfiguration
 -- | HaskDeep default configuration.
 defaultHaskDeepConfiguration :: HaskDeepConfiguration
 defaultHaskDeepConfiguration = HaskDeepConfiguration
-    { rootDirectory   = FSC.decodeString "."
-    , knownHashes     = FSC.decodeString "known.haskdeep"
+    { rootDirectory   = "."
+    , knownHashes     = "known.haskdeep"
     , excludeRegex    = Nothing
     , includeModFrom  = Nothing
     , includeModUpTo  = Nothing

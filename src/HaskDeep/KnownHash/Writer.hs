@@ -20,21 +20,19 @@ module HaskDeep.KnownHash.Writer
     )
 where
 
+import           Control.Monad.Trans.Resource (runResourceT)
 import           Prelude hiding (FilePath)
 
 import           Data.ByteString (ByteString)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as B8
 import           Data.Conduit (($$))
-import qualified Data.Conduit as C
-import qualified Data.Conduit.Filesystem as CF
+import qualified Data.Conduit.Binary as CB
 import qualified Data.Conduit.List as CL
 import qualified Data.Time as DT
-import           Data.Text ()
+import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
-import           Filesystem.Path ()
-import qualified Filesystem.Path.CurrentOS as FSC
-import qualified System.Locale as SL
+import           System.FilePath ()
 
 import           HaskDeep.Configuration
 import           HaskDeep.HashSet (HashSet)
@@ -44,18 +42,18 @@ import qualified HaskDeep.HashSet as HS
 writeHashes :: HaskDeepConfiguration -- ^ Configuration
             -> HashSet               -- ^ @HashSet@ to write
             -> IO ()
-writeHashes conf hs = C.runResourceT $ CL.sourceList bs_known $$ CF.sinkFile (knownHashes conf)
+writeHashes conf hs = runResourceT $ CL.sourceList bs_known $$ CB.sinkFile (knownHashes conf)
     where
       newline          = "\n" :: ByteString
-      root             =  TE.encodeUtf8 $ either id id $ FSC.toText $ rootDirectory conf
+      root             =  TE.encodeUtf8 $ T.pack $ rootDirectory conf
       exclude_regex    = case excludeRegex conf of
                            (Just regex) -> TE.encodeUtf8 regex
                            Nothing      -> BS.empty
       include_mod_from = case includeModFrom conf of
-                           (Just modFrom) -> B8.pack $ DT.formatTime SL.defaultTimeLocale "%FT%TZ" modFrom
+                           (Just modFrom) -> B8.pack $ DT.formatTime DT.defaultTimeLocale "%FT%TZ" modFrom
                            Nothing        -> BS.empty
       include_mod_upto = case includeModUpTo conf of
-                           (Just modUpTo) -> B8.pack $ DT.formatTime SL.defaultTimeLocale "%FT%TZ" modUpTo
+                           (Just modUpTo) -> B8.pack $ DT.formatTime DT.defaultTimeLocale "%FT%TZ" modUpTo
                            Nothing        -> BS.empty
       files_count      = B8.pack $ show $ HS.filesCount hs
       size_sum         = B8.pack $ show $ HS.sizeSum hs
