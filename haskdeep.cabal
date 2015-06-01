@@ -92,7 +92,7 @@ executable haskdeep
     , transformers         ==0.3.*
     , regex-tdfa           ==1.2.*
     , regex-tdfa-text      ==1.0.*
-    , unix                 ==2.7.*
+    , unix-compat          ==0.4.*
   ghc-options: -Wall
 
 source-repository head

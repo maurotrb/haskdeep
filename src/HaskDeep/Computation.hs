@@ -35,7 +35,7 @@ import qualified Data.Text as T
 import           Data.Time (UTCTime)
 import qualified System.Directory as D
 import           System.FilePath (FilePath, makeRelative)
-import qualified System.Posix.Files as PF
+import qualified System.PosixCompat.Files as PF
 import           Text.Regex.TDFA ((=~))
 import           Text.Regex.TDFA.Text ()
 
