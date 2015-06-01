@@ -1,3 +1,7 @@
+## Version 0.2.0.1 (01 Jun 2015)
+
+- Updated package dependencies
+
 ## Version 0.2.0.0 (15 Sep 2013)
 
 - Added option -v for version information

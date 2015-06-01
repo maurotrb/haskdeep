@@ -31,7 +31,7 @@ import           Options.Applicative
 import           HaskDeep
 
 haskdeepVersion :: String
-haskdeepVersion = "haskdeep 0.2.0.0 - file hashing and audit"
+haskdeepVersion = "haskdeep 0.2.0.1 - file hashing and audit"
 
 data Options = Version
              | Options OptExecution OptCompMode HaskDeepConfiguration

@@ -1,10 +1,10 @@
 name:                haskdeep
-version:             0.2.0.0
+version:             0.2.0.1
 cabal-version:       >=1.8
 build-type:          Simple
 license:             BSD3
 license-file:        LICENSE
-copyright:           © 2013 Mauro Taraborelli
+copyright:           © 2015 Mauro Taraborelli
 author:              Mauro Taraborelli
 maintainer:          maurotaraborelli@gmail.com
 stability:           experimental
