@@ -70,7 +70,7 @@ executable haskdeep
     HaskDeep.KnownHash.Reader
     HaskDeep.KnownHash.Writer
   build-depends:
-      attoparsec           ==0.13.*
+      attoparsec           ==0.12.*
     , base                 ==4.*
     , base16-bytestring    ==0.1.*
     , bytestring           ==0.10.*
@@ -89,7 +89,7 @@ executable haskdeep
     , resourcet            ==1.1.*
     , text                 ==1.2.*
     , time                 ==1.5.*
-    , transformers         ==0.3.*
+    , transformers         ==0.4.*
     , regex-tdfa           ==1.2.*
     , regex-tdfa-text      ==1.0.*
     , unix-compat          ==0.4.*
