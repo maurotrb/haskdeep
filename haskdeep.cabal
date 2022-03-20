@@ -1,6 +1,6 @@
 cabal-version:       3.4
 name:                haskdeep
-version:             0.2.0.1
+version:             0.2.1.0
 license:             BSD-3-Clause
 license-file:        LICENSE
 copyright:           © 2015 Mauro Taraborelli
