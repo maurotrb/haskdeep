@@ -1,0 +1,7 @@
+packages: .
+
+source-repository-package
+  type: git
+  location: https://github.com/erwinvaneijk/crypto-conduit.git
+  tag: db08e08e2ef3b81107ca5966f85a655f95baae92
+
