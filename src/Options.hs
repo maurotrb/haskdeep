@@ -114,7 +114,7 @@ parseOptCompMode "md5"      = return OptMD5
 parseOptCompMode "sha1"     = return OptSHA1
 parseOptCompMode "sha256"   = return OptSHA256
 parseOptCompMode "skein512" = return OptSkein512
-parseOptCompMode _          = readerAbort ShowHelpText
+parseOptCompMode _          = readerAbort (ShowHelpText mempty)
 
 parseText :: String -> ReadM (Maybe Text)
 parseText s = return $ Just $ T.pack s
@@ -122,7 +122,7 @@ parseText s = return $ Just $ T.pack s
 parseTime :: String -> ReadM (Maybe UTCTime)
 parseTime s = case parsedTime of
                 (Just _) -> return parsedTime
-                Nothing  -> readerAbort ShowHelpText
+                Nothing  -> readerAbort (ShowHelpText mempty)
     where
       parsedTime = DTF.parseTimeM True DTF.defaultTimeLocale "%FT%TZ" s
 

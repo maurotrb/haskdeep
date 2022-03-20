@@ -32,7 +32,7 @@ import qualified Data.Attoparsec as A
 import qualified Data.Attoparsec.Char8 as A8
 import qualified Data.Attoparsec.Combinator as AC
 import qualified Data.ByteString.Char8 as B8
-import           Data.Conduit (($$))
+import           Data.Conduit (runConduit, (.|))
 import qualified Data.Conduit.Attoparsec as CA
 import qualified Data.Conduit.Binary as CB
 import           Data.Text ()
@@ -47,7 +47,7 @@ import qualified HaskDeep.HashSet as HS
 readHashes :: HaskDeepConfiguration -- ^ Configuration
            -> IO HashSet            -- ^ @HashSet@ red from file
 readHashes conf = liftM HS.fromList $ runResourceT
-                  $ CB.sourceFile (knownHashes conf) $$ CA.sinkParser knownHashesP
+                  $ runConduit $ CB.sourceFile (knownHashes conf) .| CA.sinkParser knownHashesP
 
 
 -- Parsers
