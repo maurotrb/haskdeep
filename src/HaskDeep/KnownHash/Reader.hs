@@ -20,16 +20,16 @@ module HaskDeep.KnownHash.Reader
     )
 where
 
-import           Control.Applicative ((<*), many)
+import           Control.Applicative (many)
 import           Control.Monad (liftM)
 import           Control.Monad.Trans.Resource (runResourceT)
 import           Data.Maybe(fromJust)
 import           Data.Word (Word8)
 import           Prelude hiding (FilePath)
 
-import           Data.Attoparsec (Parser)
-import qualified Data.Attoparsec as A
-import qualified Data.Attoparsec.Char8 as A8
+import           Data.Attoparsec.ByteString (Parser)
+import qualified Data.Attoparsec.ByteString as A
+import qualified Data.Attoparsec.ByteString.Char8 as A8
 import qualified Data.Attoparsec.Combinator as AC
 import qualified Data.ByteString.Char8 as B8
 import           Data.Conduit (runConduit, (.|))

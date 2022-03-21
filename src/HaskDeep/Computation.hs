@@ -28,7 +28,7 @@ import           Prelude hiding (FilePath)
 
 import           Crypto.Classes (Hash)
 import qualified Crypto.Conduit as CC
-import           Data.Conduit (($$))
+import           Data.Conduit (runConduit, (.|))
 import qualified Data.Conduit.Combinators as CCB
 import qualified Data.Conduit.Binary as CB
 import qualified Data.Text as T
@@ -48,7 +48,7 @@ import qualified HaskDeep.HashSet as HS
 compute :: Hash ctx a => HaskDeepConfiguration
         -> ComputationMode a
         -> IO HashSet
-compute conf cm = runResourceT $ CCB.sourceDirectoryDeep False root $$ CCB.foldM insert_hash empty_with_symbol
+compute conf cm = runResourceT $ runConduit $ CCB.sourceDirectoryDeep False root .| CCB.foldM insert_hash empty_with_symbol
     where
       root              = rootDirectory conf
       regex             = excludeRegex conf
@@ -63,7 +63,7 @@ compute conf cm = runResourceT $ CCB.sourceDirectoryDeep False root $$ CCB.foldM
                              then return hs
                              else do s <- liftIO $ getFileSize fp
                                      h <- liftM (runComputation cm) $ runResourceT
-                                          $ CB.sourceFile fp $$ CC.sinkHash
+                                          $ runConduit $ CB.sourceFile fp .| CC.sinkHash
                                      return $ HS.insert (HashInfo fpt s h) hs
 
 getFileSize :: FilePath -> IO Integer

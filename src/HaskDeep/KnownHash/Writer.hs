@@ -26,7 +26,7 @@ import           Prelude hiding (FilePath)
 import           Data.ByteString (ByteString)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as B8
-import           Data.Conduit (($$))
+import           Data.Conduit (runConduit, (.|))
 import qualified Data.Conduit.Binary as CB
 import qualified Data.Conduit.List as CL
 import qualified Data.Time as DT
@@ -42,7 +42,7 @@ import qualified HaskDeep.HashSet as HS
 writeHashes :: HaskDeepConfiguration -- ^ Configuration
             -> HashSet               -- ^ @HashSet@ to write
             -> IO ()
-writeHashes conf hs = runResourceT $ CL.sourceList bs_known $$ CB.sinkFile (knownHashes conf)
+writeHashes conf hs = runResourceT $ runConduit $ CL.sourceList bs_known .| CB.sinkFile (knownHashes conf)
     where
       newline          = "\n" :: ByteString
       root             =  TE.encodeUtf8 $ T.pack $ rootDirectory conf
