@@ -2,8 +2,7 @@ packages: .
 
 package llvm-hs
     ghc-options: -optcxx -std=c++11
-    llvm-hs: -optcxx=-std=c++14 -optcxx=-lstdc++ -optcxx=-fno-rtti
-    
+
 source-repository-package
   type: git
   location: https://github.com/erwinvaneijk/crypto-conduit.git

@@ -11,36 +11,39 @@
 -- Uses a list of known hashes to audit a set of files.
 --
 -- Internal module.
-
 module HaskDeep.Configuration
-    (
-     -- * Configuration
-     HaskDeepConfiguration (..)
-    ,defaultHaskDeepConfiguration
-    )
+  ( -- * Configuration
+    HaskDeepConfiguration (..),
+    defaultHaskDeepConfiguration,
+  )
 where
 
-import           Prelude hiding (FilePath)
-
-import           Data.Text (Text)
-import           Data.Time (UTCTime)
-import           System.FilePath (FilePath)
+import Data.Text (Text)
+import Data.Time (UTCTime)
+import System.FilePath (FilePath)
+import Prelude hiding (FilePath)
 
 -- | HaskDeep configuration.
 data HaskDeepConfiguration = HaskDeepConfiguration
-    { rootDirectory   :: FilePath      -- ^ Root directory
-    , knownHashes     :: FilePath      -- ^ Known hashes file
-    , excludeRegex    :: Maybe Text    -- ^ Exclude rule (Regex)
-    , includeModFrom  :: Maybe UTCTime -- ^ Include file modified from
-    , includeModUpTo  :: Maybe UTCTime -- ^ Include file modified up to
-    }
+  { -- | Root directory
+    rootDirectory :: FilePath,
+    -- | Known hashes file
+    knownHashes :: FilePath,
+    -- | Exclude rule (Regex)
+    excludeRegex :: Maybe Text,
+    -- | Include file modified from
+    includeModFrom :: Maybe UTCTime,
+    -- | Include file modified up to
+    includeModUpTo :: Maybe UTCTime
+  }
 
 -- | HaskDeep default configuration.
 defaultHaskDeepConfiguration :: HaskDeepConfiguration
-defaultHaskDeepConfiguration = HaskDeepConfiguration
-    { rootDirectory   = "."
-    , knownHashes     = "known.haskdeep"
-    , excludeRegex    = Nothing
-    , includeModFrom  = Nothing
-    , includeModUpTo  = Nothing
+defaultHaskDeepConfiguration =
+  HaskDeepConfiguration
+    { rootDirectory = ".",
+      knownHashes = "known.haskdeep",
+      excludeRegex = Nothing,
+      includeModFrom = Nothing,
+      includeModUpTo = Nothing
     }
