@@ -11,13 +11,18 @@ on:
       - opened
       - synchronize
 jobs:
+  ormolu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: mrkkrp/ormolu-action@v5
   build:
     runs-on: ubuntu-latest
+    needs: ormolu
     strategy:
       matrix:
         cabal: ["3.4"]
         ghc: ["8.10.7", "9.0.2", "9.2.2"]
-        # ghc: ["8.8.4", "8.10.7", "9.0.2"]
     env:
       CONFIG: "--enable-tests --enable-benchmarks"
     steps:
@@ -40,3 +45,4 @@ jobs:
       - run: cabal v2-build $CONFIG
       - run: cabal v2-test $CONFIG
       - run: cabal v2-sdist
+  
