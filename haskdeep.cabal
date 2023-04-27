@@ -1,65 +1,64 @@
-cabal-version:       3.0
-name:                haskdeep
-version:             0.2.1.0
-license:             BSD-3-Clause
-license-file:        LICENSE
-copyright:           © 2015 Mauro Taraborelli
-author:              Mauro Taraborelli
-maintainer:          maurotaraborelli@gmail.com
-stability:           experimental
-homepage:            https://github.com/maurotrb/haskdeep
-bug-reports:         https://github.com/maurotrb/haskdeep/issues
-synopsis:            Computes and audits file hashes.
+cabal-version:      3.0
+name:               haskdeep
+version:            0.2.1.0
+license:            BSD-3-Clause
+license-file:       LICENSE
+copyright:          © 2015 Mauro Taraborelli
+author:             Mauro Taraborelli
+maintainer:         maurotaraborelli@gmail.com
+stability:          experimental
+homepage:           https://github.com/maurotrb/haskdeep
+bug-reports:        https://github.com/maurotrb/haskdeep/issues
+synopsis:           Computes and audits file hashes.
 description:
-    A command line application that computes file hashes traversing recursively
-    through a directory structure.
-    .
-    The known hashes can be used to audit the same directory structure or a copy
-    of it.
-    .
-    Execute haskdeep without arguments and it will show you the help text:
-    .
-    > user@host:~$ haskdeep
-    >
-    >  Usage: haskdeep COMMAND [-c|--computation MODE] [-r|--root DIRNAME] [-k|--known FILENAME]
-    >    Computes hashes and audit a set of files
-    >
-    >  Available options:
-    >    -h,--help                Show this help text
-    >    -v,--version             Show version information
-    >    -c,--computation MODE    md5 | sha1 | sha256 | skein512 - default md5
-    >    -r,--root DIRNAME        Root directory - default current directory
-    >    -k,--known FILENAME      Known hashes file - default known.haskdeep
-    >    -e,--excl-regex REGEX    Exclude files or directories based on regex
-    >    -f,--incl-mod-from DATE  Include files modified from yyyy-mm-ddThh:mm:ssZ
-    >    -t,--incl-mod-upto DATE  Include files modified up to yyyy-mm-ddThh:mm:ssZ
-    >
-    >  Available commands:
-    >    compute                  Computes file hashes and saves them to known hashes file
-    >    audit                    Audits files comparing them to known hashes
-    .
-    Default usage:
-    .
-    1. create known hashes of files contained in a root directory (traversed recursively)
-    .
-    >  user@host:~$ haskdeep compute -c md5 -r myimportantfiles/ -k knownhashes.txt -e "tmp|\.log"
-    .
-    2. verify a copy of the same files comparing them with known hashes
-    .
-    >  user@host:~$ haskdeep audit -c md5 -r copyofmyimportantfiles/ -k knownhashes.txt -e "tmp|\.log"
-    .
-    Heavily inspired by @hashdeep@: <http://md5deep.sourceforge.net/>
-category:            Console, Cryptography, System
-extra-source-files:
-    README.md
-    CHANGELOG.md
+  A command line application that computes file hashes traversing recursively
+  through a directory structure.
+  .
+  The known hashes can be used to audit the same directory structure or a copy
+  of it.
+  .
+  Execute haskdeep without arguments and it will show you the help text:
+  .
+  > user@host:~$ haskdeep
+  >
+  >  Usage: haskdeep COMMAND [-c|--computation MODE] [-r|--root DIRNAME] [-k|--known FILENAME]
+  >    Computes hashes and audit a set of files
+  >
+  >  Available options:
+  >    -h,--help                Show this help text
+  >    -v,--version             Show version information
+  >    -c,--computation MODE    md5 | sha1 | sha256 | skein512 - default md5
+  >    -r,--root DIRNAME        Root directory - default current directory
+  >    -k,--known FILENAME      Known hashes file - default known.haskdeep
+  >    -e,--excl-regex REGEX    Exclude files or directories based on regex
+  >    -f,--incl-mod-from DATE  Include files modified from yyyy-mm-ddThh:mm:ssZ
+  >    -t,--incl-mod-upto DATE  Include files modified up to yyyy-mm-ddThh:mm:ssZ
+  >
+  >  Available commands:
+  >    compute                  Computes file hashes and saves them to known hashes file
+  >    audit                    Audits files comparing them to known hashes
+  .
+  Default usage:
+  .
+  1. create known hashes of files contained in a root directory (traversed recursively)
+  .
+  >  user@host:~$ haskdeep compute -c md5 -r myimportantfiles/ -k knownhashes.txt -e "tmp|\.log"
+  .
+  2. verify a copy of the same files comparing them with known hashes
+  .
+  >  user@host:~$ haskdeep audit -c md5 -r copyofmyimportantfiles/ -k knownhashes.txt -e "tmp|\.log"
+  .
+  Heavily inspired by @hashdeep@: <http://md5deep.sourceforge.net/>
 
+category:           Console, Cryptography, System
+extra-source-files:
+  CHANGELOG.md
+  README.md
 
 executable haskdeep
   hs-source-dirs:   src
   main-is:          Main.hs
   other-modules:
-    Options
     HaskDeep
     HaskDeep.Computation
     HaskDeep.ComputationMode
@@ -67,28 +66,30 @@ executable haskdeep
     HaskDeep.HashSet
     HaskDeep.KnownHash.Reader
     HaskDeep.KnownHash.Writer
-  build-depends:
-      attoparsec           >=0.13
-    , base16-bytestring    ==1.0.*
-    , base                 >=4.13 && <4.18
-    , bytestring           >=0.9 && <1.0
-    , cereal               >=0.5
-    , conduit              ==1.3.*
-    , crypto-conduit       ==0.5.6
-    , conduit-extra        ==1.3.*
-    , containers           ==0.6.*
-    , cryptonite           >=0.20
-    , cryptohash-cryptoapi ==0.1.*
-    , crypto-api           ==0.13.*
-    , directory            ==1.3.*
-    , filepath             ==1.4.*
-    , optparse-applicative ==0.16.*
-    , resourcet            ==1.2.*
-    , text                 ==1.2.*
-    , time                 ==1.9.*
-    , transformers         ==0.5.*
-    , regex-tdfa           ==1.3.*
-    , unix-compat          ==0.5.*
-  ghc-options: -Wall
-  default-language: Haskell2010
+    Options
 
+  build-depends:
+    , attoparsec            >=0.13
+    , base                  >=4.13  && <4.18
+    , base16-bytestring     >=1.0   && <1.1
+    , bytestring            >=0.9   && <1.0
+    , cereal                >=0.5
+    , conduit               >=1.3   && <1.4
+    , conduit-extra         >=1.3   && <1.4
+    , containers            >=0.6   && <0.7
+    , crypto-api            >=0.13  && <0.14
+    , crypto-conduit        ==0.5.6
+    , cryptohash-cryptoapi  >=0.1   && <0.2
+    , cryptonite            >=0.20
+    , directory             >=1.3   && <1.4
+    , filepath              >=1.4   && <1.5
+    , optparse-applicative  >=0.16  && <0.18
+    , regex-tdfa            >=1.3   && <1.4
+    , resourcet             >=1.2   && <1.3
+    , text                  >=1.2   && <1.3
+    , time                  >=1.9   && <1.12
+    , transformers          >=0.5   && <0.6
+    , unix-compat           >=0.5   && <0.6
+
+  ghc-options:      -Wall
+  default-language: Haskell2010
